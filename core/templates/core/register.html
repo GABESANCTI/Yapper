@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Registrar-se no Yapper</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Criar Conta</button>
+  </form>
+  <p>Já tem conta? <a href="{% url 'login' %}">Entrar</a></p>
+{% endblock %}
