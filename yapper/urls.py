@@ -32,7 +32,8 @@ urlpatterns = [
     #users
     path('accounts/', include('django.contrib.auth.urls')),
     path('users/', include('users.urls')),
-    path('accounts/', include('django.contrib.auth.urls')),
+   
+   # path('accounts/', include('django.contrib.auth.urls')),
     #gesteao de posts
     path('', include('yaps.urls')),
     path('', include('users.urls')),  # adiciona o app de usuários
