@@ -1,3 +1,3 @@
 from django.db import models
 
-# Create your models here.
+# por hora vazio por estar usando o modelo User do Django
