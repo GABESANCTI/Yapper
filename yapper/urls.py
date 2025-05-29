@@ -17,11 +17,25 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
+
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('core.urls')), #timeline tem q ser a pagina inicial e tals
-    path('login/', auth_views.LoginView.as_view(template_name='core/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
-    path('', include('core.urls')),
+    path('admin/', admin.site.urls),#admin panel do django 
+    #migração de estruturas
+    #path('', include('core.urls')), #timeline tem q ser a pagina inicial e tals
+    #path('', include('core.urls')),
+    #path('login/', auth_views.LoginView.as_view(template_name='core/login.html'), name='login'),
+    #path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+   
+   
+#nova estrutura 
+    #users
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('users/', include('users.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
+    #gesteao de posts
+    path('', include('yaps.urls')),
+    path('', include('users.urls')),  # adiciona o app de usuários
+
 
 ]

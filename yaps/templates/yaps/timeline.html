@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+
+  <div class="card mb-4 shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">O que está acontecendo?</h5>
+
+      {% if user.is_authenticated %}
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            {{ form.conteudo }}
+          </div>
+          <button type="submit" class="btn btn-primary">Yappar!</button>
+        </form>
+      {% else %}
+        <p class="text-muted">
+          <a href="{% url 'login' %}">Faça login</a> para postar seus yaps.
+        </p>
+      {% endif %}
+    </div>
+  </div>
+
+  <h4 class="mb-3">Yaps recentes</h4>
+
+  {% for post in posts %}
+    <div class="card mb-3">
+      <div class="card-body">
+        <h6 class="card-subtitle mb-1 text-muted">@{{ post.autor.username }} · {{ post.criado_em|date:"d/m/Y H:i" }}</h6>
+        <p class="card-text">{{ post.conteudo }}</p>
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-muted">Nenhum yap ainda. Seja o primeiro a yappar!</p>
+  {% endfor %}
+
+</div>
+{% endblock %}
