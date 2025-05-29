@@ -23,7 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),#admin panel do django
 #nova estrutura 
     #users
-    path('accounts/', include('django.contrib.auth.urls')),
+   # path('accounts/', include('django.contrib.auth.urls')),
     path('users/', include('users.urls')),
    
    # path('accounts/', include('django.contrib.auth.urls')),
