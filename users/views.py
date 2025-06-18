@@ -29,3 +29,8 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+def home_view(request):
+    if request.user.is_authenticated:
+        return redirect('timeline')  
+    return redirect('login')  
