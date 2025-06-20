@@ -2,9 +2,12 @@ from rest_framework import generics, permissions
 from yaps.models import *
 from yaps.api.serializers import *
 from rest_framework.exceptions import PermissionDenied
+from django_filters.rest_framework import DjangoFilterBackend
 class YapListAPIView(generics.ListAPIView):
     queryset = Yap.objects.all().order_by('-criado_em')
     serializer_class = YapSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['autor__username']  # ou 'autor_id'
 
 
 class LikeCreateAPIView(generics.CreateAPIView):
