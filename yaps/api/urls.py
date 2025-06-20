@@ -16,8 +16,10 @@ urlpatterns = [
     #Comentários
     path('yaps/<int:yap_id>/comments/', views.YapCommentsListAPIView.as_view(), name='yap_comments'),
     path('comments/create/', views.CommentCreateAPIView.as_view(), name='create_comment'),
-    #deletar Yap
+    #delete de yap e comentario
     path('yaps/<int:pk>/delete/', views.YapDeleteAPIView.as_view(), name='delete_yap'),
+    path('comments/<int:pk>/delete/', views.CommentDeleteAPIView.as_view(), name='delete_comment'),
+
     
     
 ]

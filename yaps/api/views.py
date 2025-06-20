@@ -55,8 +55,9 @@ class YapDeleteAPIView(generics.DestroyAPIView):
 
 #403 Forbidden se não for o autor.
 
- # autor só deleta seus próprios Yaps
+ # autor só deleta seus próprios Yaps e comentarios
 class YapDeleteAPIView(generics.DestroyAPIView):
+
     queryset = Yap.objects.all()
     serializer_class = YapSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -64,3 +65,14 @@ class YapDeleteAPIView(generics.DestroyAPIView):
     def get_queryset(self):
        
         return self.queryset.filter(autor=self.request.user)
+
+
+class CommentDeleteAPIView(generics.DestroyAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_destroy(self, instance):
+        if instance.user != self.request.user:
+            raise PermissionDenied("Você não tem permissão para deletar este comentário.")
+        instance.delete()
