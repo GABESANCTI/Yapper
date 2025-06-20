@@ -54,3 +54,13 @@ class YapDeleteAPIView(generics.DestroyAPIView):
 #204 No Content se for o autor.
 
 #403 Forbidden se não for o autor.
+
+ # autor só deleta seus próprios Yaps
+class YapDeleteAPIView(generics.DestroyAPIView):
+    queryset = Yap.objects.all()
+    serializer_class = YapSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+       
+        return self.queryset.filter(autor=self.request.user)

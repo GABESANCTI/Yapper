@@ -44,3 +44,14 @@ class YapsAPITestCase(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)
+
+class YapDeleteTest(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='teste', password='123456')
+        self.client.login(username='teste', password='123456')
+        self.yap = Yap.objects.create(autor=self.user, conteudo='Vou deletar isso...')
+
+    def test_user_can_delete_own_yap(self):
+        response = self.client.delete(f'/yaps/api/yaps/{self.yap.id}/delete/')
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(Yap.objects.filter(id=self.yap.id).exists())
