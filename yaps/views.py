@@ -14,6 +14,7 @@ def timeline(request):
             return redirect('timeline')
     else:
         form = YapForm()
-    
+
+
     posts = Yap.objects.all().order_by('-criado_em')
     return render(request, 'yaps/timeline.html', {'form': form, 'posts': posts})

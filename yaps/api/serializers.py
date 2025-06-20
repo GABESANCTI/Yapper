@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from models import Yap
+from yaps. models import Yap
 
 class YapSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField(read_only=True)

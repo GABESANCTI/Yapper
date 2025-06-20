@@ -1,5 +1,5 @@
 from rest_framework import generics
-from models import Yap
+from yaps.models import Yap
 from yaps.api.serializers import YapSerializer
 
 class YapListAPIView(generics.ListAPIView):
