@@ -26,13 +26,13 @@ SECRET_KEY = 'django-insecure-tnh#-+#wzvy7n8by!p%8unc9b#xql!&&svf@tu3&s5j1li9p&#
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+CORS_ALLOW_ALL_ORIGINS = True  # Para testes
 
 # Application definition
 
 INSTALLED_APPS = [
     'django_filters',
-    #'corsheaders',Permite requisições de outros domínios
+    'corsheaders',#Permite requisições de outros domínios e origem cruzada
     'rest_framework',
     'yaps',
     'users',
@@ -47,10 +47,11 @@ REST_FRAMEWORK = {
     'default_filter_backends': (
     'django_filters.rest_framework.DjangoFilterBackend'),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 3  # Quantos Yaps por page muahahahahaha
+    'PAGE_SIZE': 10  # Quantos Yaps por page muahahahahaha
 }
 
-MIDDLEWARE = [
+MIDDLEWARE = ['corsheaders.middleware.CorsMiddleware',
+    
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
