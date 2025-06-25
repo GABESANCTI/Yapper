@@ -29,8 +29,6 @@ urlpatterns = [
    # path('accounts/', include('django.contrib.auth.urls')),
     #gesteao de posts
     path('', include('yaps.urls')),
-    path('', include('users.urls')),  # adiciona o app de usuários
-
     #api yaps
     path('api/', include('yaps.api.urls')),
 
