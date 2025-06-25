@@ -15,7 +15,6 @@ class Like(models.Model):
 
     class Meta:
         unique_together = ('user', 'yap')
-        #yap recebe apenas um like por usuário
     def __str__(self):
         return f'{self.user.username} curtiu o Yap! {self.yap.id}'
     
