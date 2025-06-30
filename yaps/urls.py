@@ -10,8 +10,9 @@ urlpatterns = [
     path('yap/<int:pk>/', views.yap_detail, name='yap_detail'),
     path('yap/<int:pk>/delete/', views.delete_yap, name='delete_yap'),
     path('yap/<int:pk>/like/', views.like_yap, name='like_yap'),
-    path('yap/<int:pk>/unlike/', views.unlike_yap, name='unlike_yap'),
+
+    #path('yap/<int:pk>/unlike/', views.unlike_yap, name='unlike_yap'),
     path('comment/<int:pk>/like/', views.like_comment, name='like_comment'),
-    path('comment/<int:pk>/unlike/', views.unlike_comment, name='unlike_comment'),
+    #path('comment/<int:pk>/unlike/', views.unlike_comment, name='unlike_comment'),
     path('comment/<int:pk>/delete/', views.delete_comment, name='delete_comment'),
 ]

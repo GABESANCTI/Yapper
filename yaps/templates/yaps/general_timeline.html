@@ -23,19 +23,40 @@
         <div class="card mb-3">
             <div class="card-body">
                 <p class="card-text">
-                    <a href="{% url 'core:user_profile' username=yap.user.username %}" class="fw-bold">@{{ yap.user.username }}</a> - {{ yap.created_at|date:"d M, Y H:i" }}
+                    {# Link para o perfil do usuário #}
+                    <a href="{% url 'core:user_profile' username=yap.user.username %}" class="fw-bold">@{{ yap.user.username }}</a>
+                    <small class="text-muted ms-2">{{ yap.created_at|date:"d M, Y H:i" }}</small>
                 </p>
-                <p class="card-text">{{ yap.content }}</p>
+                {# O corpo do Yap é um link clicável para os detalhes #}
+                <a href="{% url 'yaps:yap_detail' pk=yap.id %}" class="text-decoration-none text-dark">
+                    <p class="card-text fs-5">{{ yap.content }}</p>
+                </a>
                 <p class="card-text text-muted small">
-                    Curtidas: {{ yap.likes_count }} | Comentários: {{ yap.comments_count }} | Views: {{ yap.views_count }}
+                    Views: {{ yap.views_count }}
                 </p>
+
                 <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <a href="{% url 'yaps:yap_detail' pk=yap.pk %}" class="btn btn-sm btn-outline-info me-2">Ver Yap</a>
+                    {# Botão de Curtir #}
+                    <div class="like-section" data-yap-id="{{ yap.id }}">
                         {% if user.is_authenticated %}
-                            {% if yap.user == user %}
-                                <a href="{% url 'yaps:delete_yap' pk=yap.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja apagar este Yap?');">Apagar</a>
-                            {% endif %}
+                            <button class="btn btn-sm {% if user in yap.likes.all %}btn-danger{% else %}btn-outline-danger{% endif %} like-button">
+                                <i class="bi bi-heart-fill"></i> Curtir
+                            </button>
+                        {% else %}
+                            <button class="btn btn-sm btn-outline-secondary" disabled>
+                                <i class="bi bi-heart-fill"></i> Curtir
+                            </button>
+                        {% endif %}
+                        <span class="like-count ms-2">{{ yap.likes_count }}</span>
+                    </div>
+
+                    {# Botão de Comentário #}
+                    <div>
+                        <a href="{% url 'yaps:yap_detail' pk=yap.id %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-chat-fill"></i> Comentar ({{ yap.comments_count }})
+                        </a>
+                        {% if user.is_authenticated and yap.user == user %}
+                            <a href="{% url 'yaps:delete_yap' pk=yap.id %}" class="btn btn-sm btn-outline-danger ms-2" onclick="return confirm('Tem certeza que deseja apagar este Yap?');">Apagar</a>
                         {% endif %}
                     </div>
                 </div>
@@ -44,4 +65,38 @@
     {% empty %}
         <p>Nenhum Yap ainda. Seja o primeiro a Yappar!</p>
     {% endfor %}
+
+    {# Script para lidar com as curtidas de Yaps via AJAX #}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.like-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const yapId = this.closest('.like-section').dataset.yapId;
+                    const likeCountSpan = this.closest('.like-section').querySelector('.like-count');
+                    const likeButton = this;
+
+                    fetch(`/yap/${yapId}/like/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        likeCountSpan.textContent = data.total_likes;
+                        if (data.liked) {
+                            likeButton.classList.remove('btn-outline-danger');
+                            likeButton.classList.add('btn-danger');
+                        } else {
+                            likeButton.classList.remove('btn-danger');
+                            likeButton.classList.add('btn-outline-danger');
+                        }
+                    })
+                    .catch(error => console.error('Erro ao curtir Yap:', error));
+                });
+            });
+        });
+    </script>
 {% endblock %}

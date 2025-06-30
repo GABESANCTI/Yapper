@@ -1,12 +1,14 @@
-
 from django.db import models
-from django.conf import settings # Para referenciar o modelo de usuário do projeto
+from django.conf import settings # Para referenciar o modelo de usuário do projet
 
 class Yap(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='yaps')
     content = models.TextField(max_length=280) # Limite de caracteres como no Twitter
     created_at = models.DateTimeField(auto_now_add=True)
     views_count = models.PositiveIntegerField(default=0)
+
+    # A funcionalidade de likes será gerenciada inteiramente pelo modelo 'Like' explícito.
+    # likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_yaps', blank=True)
 
     class Meta:
         ordering = ['-created_at'] # Ordena os yaps pelo mais recente
@@ -33,11 +35,13 @@ class Like(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        # Garante que um usuário só pode curtir um yap ou comentário uma vez
+
         unique_together = ('user', 'yap'), ('user', 'comment')
+        ordering = ['-created_at'] 
 
     def __str__(self):
         if self.yap:
             return f"User {self.user.username} liked Yap {self.yap.id}"
         elif self.comment:
             return f"User {self.user.username} liked Comment {self.comment.id}"
+        return f"User {self.user.username} liked something unknown" # Caso para depuração

@@ -1,56 +1,123 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 
 {% block title %}Perfil de @{{ profile_user.username }}{% endblock %}
 
 {% block content %}
     <div class="card mb-4">
         <div class="card-body text-center">
+            {# Foto de Perfil #}
             {% if profile_user.profile_picture %}
                 <img src="{{ profile_user.profile_picture.url }}" class="rounded-circle mb-3" alt="Foto de perfil" style="width: 150px; height: 150px; object-fit: cover;">
             {% else %}
                 <img src="https://via.placeholder.com/150" class="rounded-circle mb-3" alt="Foto de perfil padrão" style="width: 150px; height: 150px; object-fit: cover;">
             {% endif %}
+
             <h2 class="card-title">@{{ profile_user.username }}</h2>
+            
+            {# Biografia #}
             {% if profile_user.bio %}
                 <p class="card-text">{{ profile_user.bio }}</p>
             {% else %}
                 <p class="card-text text-muted">Nenhuma biografia ainda.</p>
             {% endif %}
+            
             <p class="card-text text-muted small">
                 Seguidores: {{ profile_user.followers.count }} | Seguindo: {{ profile_user.following.count }} | Visualizações do Perfil: {{ profile_user.profile_views }}
             </p>
+
+            {# Botão de Seguir/Deixar de Seguir (visível apenas se não for o próprio usuário) #}
             {% if user.is_authenticated and user != profile_user %}
-                {% if is_following %}
-                    <a href="{% url 'core:unfollow_user' username=profile_user.username %}" class="btn btn-danger">Deixar de Seguir</a>
-                {% else %}
-                    <a href="{% url 'core:follow_user' username=profile_user.username %}" class="btn btn-primary">Seguir</a>
-                {% endif %}
+                <form action="{% if is_following %}{% url 'core:unfollow_user' username=profile_user.username %}{% else %}{% url 'core:follow_user' username=profile_user.username %}{% endif %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn {% if is_following %}btn-outline-secondary{% else %}btn-primary{% endif %}">
+                        {% if is_following %}Deixar de Seguir{% else %}Seguir{% endif %}
+                    </button>
+                </form>
             {% endif %}
         </div>
     </div>
 
     <h3 class="mt-5 mb-3">Yaps de @{{ profile_user.username }}</h3>
-    {% for yap in yaps %}
+
+    {% for yap in user_yaps %}
         <div class="card mb-3">
             <div class="card-body">
                 <p class="card-text">
-                    <a href="{% url 'core:user_profile' username=yap.user.username %}" class="fw-bold">@{{ yap.user.username }}</a> - {{ yap.created_at|date:"d M, Y H:i" }}
+                    {# Link para o próprio perfil (já que é o yap do usuário do perfil) #}
+                    <a href="{% url 'core:user_profile' username=yap.user.username %}" class="fw-bold">@{{ yap.user.username }}</a>
+                    <small class="text-muted ms-2">{{ yap.created_at|date:"d M, Y H:i" }}</small>
                 </p>
-                <p class="card-text">{{ yap.content }}</p>
+                {# CORPO DO YAP CLICÁVEL #}
+                <a href="{% url 'yaps:yap_detail' pk=yap.id %}" class="text-decoration-none text-dark">
+                    <p class="card-text fs-5">{{ yap.content }}</p>
+                </a>
                 <p class="card-text text-muted small">
-                    Curtidas: {{ yap.likes.count }} | Comentários: {{ yap.comments.count }} | Views: {{ yap.views_count }}
+                    Views: {{ yap.views_count }}
                 </p>
+
                 <div class="d-flex justify-content-between align-items-center">
+                    {# Botão de Curtir #}
+                    <div class="like-section" data-yap-id="{{ yap.id }}">
+                        {% if user.is_authenticated %}
+                            <button class="btn btn-sm {% if user in yap.likes.all %}btn-danger{% else %}btn-outline-danger{% endif %} like-button">
+                                <i class="bi bi-heart-fill"></i> Curtir
+                            </button>
+                        {% else %}
+                            <button class="btn btn-sm btn-outline-secondary" disabled>
+                                <i class="bi bi-heart-fill"></i> Curtir
+                            </button>
+                        {% endif %}
+                        <span class="like-count ms-2">{{ yap.likes.count }}</span>
+                    </div>
+
+                    {# Botão de Comentário #}
                     <div>
-                        <a href="{% url 'yaps:yap_detail' pk=yap.pk %}" class="btn btn-sm btn-outline-info me-2">Ver Yap</a>
+                        <a href="{% url 'yaps:yap_detail' pk=yap.id %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-chat-fill"></i> Comentar ({{ yap.comments.count }})
+                        </a>
                         {% if user.is_authenticated and yap.user == user %}
-                            <a href="{% url 'yaps:delete_yap' pk=yap.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja apagar este Yap?');">Apagar</a>
+                            <a href="{% url 'yaps:delete_yap' pk=yap.id %}" class="btn btn-sm btn-outline-danger ms-2" onclick="return confirm('Tem certeza que deseja apagar este Yap?');">Apagar</a>
                         {% endif %}
                     </div>
                 </div>
             </div>
         </div>
     {% empty %}
-        <p>@{{ profile_user.username }} ainda não fez nenhum Yap.</p>
+        <p>Este usuário ainda não publicou nenhum Yap.</p>
     {% endfor %}
+
+    {# Script para lidar com as curtidas de Yaps via AJAX #}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.like-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const yapId = this.closest('.like-section').dataset.yapId;
+                    const likeCountSpan = this.closest('.like-section').querySelector('.like-count');
+                    const likeButton = this;
+
+                    fetch(`/yap/${yapId}/like/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        likeCountSpan.textContent = data.total_likes;
+                        if (data.liked) {
+                            likeButton.classList.remove('btn-outline-danger');
+                            likeButton.classList.add('btn-danger');
+                        } else {
+                            likeButton.classList.remove('btn-danger');
+                            likeButton.classList.add('btn-outline-danger');
+                        }
+                    })
+                    .catch(error => console.error('Erro ao curtir Yap:', error));
+                });
+            });
+        });
+    </script>
 {% endblock %}
