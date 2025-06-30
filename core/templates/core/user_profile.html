@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Perfil de @{{ profile_user.username }}{% endblock %}
+
+{% block content %}
+    <div class="card mb-4">
+        <div class="card-body text-center">
+            {% if profile_user.profile_picture %}
+                <img src="{{ profile_user.profile_picture.url }}" class="rounded-circle mb-3" alt="Foto de perfil" style="width: 150px; height: 150px; object-fit: cover;">
+            {% else %}
+                <img src="https://via.placeholder.com/150" class="rounded-circle mb-3" alt="Foto de perfil padrão" style="width: 150px; height: 150px; object-fit: cover;">
+            {% endif %}
+            <h2 class="card-title">@{{ profile_user.username }}</h2>
+            {% if profile_user.bio %}
+                <p class="card-text">{{ profile_user.bio }}</p>
+            {% else %}
+                <p class="card-text text-muted">Nenhuma biografia ainda.</p>
+            {% endif %}
+            <p class="card-text text-muted small">
+                Seguidores: {{ profile_user.followers.count }} | Seguindo: {{ profile_user.following.count }} | Visualizações do Perfil: {{ profile_user.profile_views }}
+            </p>
+            {% if user.is_authenticated and user != profile_user %}
+                {% if is_following %}
+                    <a href="{% url 'core:unfollow_user' username=profile_user.username %}" class="btn btn-danger">Deixar de Seguir</a>
+                {% else %}
+                    <a href="{% url 'core:follow_user' username=profile_user.username %}" class="btn btn-primary">Seguir</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+    <h3 class="mt-5 mb-3">Yaps de @{{ profile_user.username }}</h3>
+    {% for yap in yaps %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <p class="card-text">
+                    <a href="{% url 'core:user_profile' username=yap.user.username %}" class="fw-bold">@{{ yap.user.username }}</a> - {{ yap.created_at|date:"d M, Y H:i" }}
+                </p>
+                <p class="card-text">{{ yap.content }}</p>
+                <p class="card-text text-muted small">
+                    Curtidas: {{ yap.likes.count }} | Comentários: {{ yap.comments.count }} | Views: {{ yap.views_count }}
+                </p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <a href="{% url 'yaps:yap_detail' pk=yap.pk %}" class="btn btn-sm btn-outline-info me-2">Ver Yap</a>
+                        {% if user.is_authenticated and yap.user == user %}
+                            <a href="{% url 'yaps:delete_yap' pk=yap.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja apagar este Yap?');">Apagar</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p>@{{ profile_user.username }} ainda não fez nenhum Yap.</p>
+    {% endfor %}
+{% endblock %}

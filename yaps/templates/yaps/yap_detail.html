@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Yap de @{{ yap.user.username }}{% endblock %}
+
+{% block content %}
+    <h2 class="mb-4">Detalhes do Yap</h2>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <p class="card-text">
+                <a href="{% url 'core:user_profile' username=yap.user.username %}" class="fw-bold">@{{ yap.user.username }}</a> - {{ yap.created_at|date:"d M, Y H:i" }}
+            </p>
+            <p class="card-text fs-4">{{ yap.content }}</p>
+            <p class="card-text text-muted small">
+                Curtidas: {{ yap.likes.count }} | Comentários: {{ yap.comments.count }} | Views: {{ yap.views_count }}
+            </p>
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    {% if user.is_authenticated %}
+                        {% if is_liked %}
+                            <a href="{% url 'yaps:unlike_yap' pk=yap.pk %}" class="btn btn-sm btn-danger">Descurtir</a>
+                        {% else %}
+                            <a href="{% url 'yaps:like_yap' pk=yap.pk %}" class="btn btn-sm btn-primary">Curtir</a>
+                        {% endif %}
+                    {% endif %}
+                    {% if user.is_authenticated and yap.user == user %}
+                        <a href="{% url 'yaps:delete_yap' pk=yap.pk %}" class="btn btn-sm btn-outline-danger ms-2" onclick="return confirm('Tem certeza que deseja apagar este Yap?');">Apagar Yap</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mt-5 mb-3">Comentários</h3>
+    {% if user.is_authenticated %}
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Adicionar Comentário</h5>
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit" class="btn btn-success mt-2">Comentar</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    {% for comment in comments %}
+        <div class="card mb-2">
+            <div class="card-body">
+                <p class="card-text">
+                    <a href="{% url 'core:user_profile' username=comment.user.username %}" class="fw-bold">@{{ comment.user.username }}</a> - {{ comment.created_at|date:"d M, Y H:i" }}
+                </p>
+                <p class="card-text">{{ comment.content }}</p>
+                <p class="card-text text-muted small">
+                    Curtidas: {{ comment.likes_count }}
+                </p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        {% if user.is_authenticated %}
+                            {% if comment.likes.filter(user=user).exists %}
+                                <a href="{% url 'yaps:unlike_comment' pk=comment.pk %}" class="btn btn-sm btn-danger">Descurtir</a>
+                            {% else %}
+                                <a href="{% url 'yaps:like_comment' pk=comment.pk %}" class="btn btn-sm btn-primary">Curtir</a>
+                            {% endif %}
+                        {% endif %}
+                        {% if user.is_authenticated and (comment.user == user or comment.yap.user == user) %}
+                            <a href="{% url 'yaps:delete_comment' pk=comment.pk %}" class="btn btn-sm btn-outline-danger ms-2" onclick="return confirm('Tem certeza que deseja apagar este comentário?');">Apagar</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p>Nenhum comentário ainda. Seja o primeiro a comentar!</p>
+    {% endfor %}
+{% endblock %}

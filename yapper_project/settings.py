@@ -34,10 +34,9 @@ LOGOUT_REDIRECT_URL = '/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-
 INSTALLED_APPS = [
-    #crispy_froms, depois
-    #crispy_bootstrap5,
+    'crispy_forms', 
+    'crispy_bootstrap5',
     'core',
     'yaps',
     'django.contrib.admin',
