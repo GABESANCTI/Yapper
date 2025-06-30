@@ -3,13 +3,10 @@ from django.contrib.auth import login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, F
-
-# Importe seus modelos personalizados
 from .models import User
-from yaps.models import Yap # Para pegar os yaps do usuário
+from yaps.models import Yap
 
-# Importe seus formulários
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm,UserUpdateForm
 
 def register(request):
     if request.method == 'POST':
@@ -27,7 +24,27 @@ def register(request):
         form = CustomUserCreationForm()
     return render(request, 'core/register.html', {'form': form})
 
-# View para o perfil do usuário
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        form = UserUpdateForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Seu perfil foi atualizado com sucesso!")
+            return redirect('core:user_profile', username=request.user.username)
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field.replace('_', ' ').capitalize()}: {error}")
+    else:
+        # Exibe o formulário preenchido com os dados atuais do usuário
+        form = UserUpdateForm(instance=request.user)
+    
+    context = {
+        'form': form,
+    }
+    return render(request, 'core/edit_profile.html', context)
 @login_required
 def user_profile(request, username):
     # Pega o usuário do perfil ou retorna 404
@@ -58,7 +75,7 @@ def user_profile(request, username):
     }
     return render(request, 'core/user_profile.html', context)
 
-# Views para seguir/deixar de seguir
+
 @login_required
 def follow_user(request, username):
     user_to_follow = get_object_or_404(User, username=username)

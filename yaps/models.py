@@ -6,15 +6,13 @@ class Yap(models.Model):
     content = models.TextField(max_length=280) # Limite de caracteres como no Twitter
     created_at = models.DateTimeField(auto_now_add=True)
     views_count = models.PositiveIntegerField(default=0)
+    ordering = ['-created_at'] # Ordena os yaps pelo mais recente
 
     # A funcionalidade de likes será gerenciada inteiramente pelo modelo 'Like' explícito.
     # likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_yaps', blank=True)
-
     class Meta:
-        ordering = ['-created_at'] # Ordena os yaps pelo mais recente
-
-    def __str__(self):
-        return f"Yap by {self.user.username} at {self.created_at.strftime('%Y-%m-%d %H:%M')}"
+        def __str__(self):
+            return f"Yap by {self.user.username} at {self.created_at.strftime('%Y-%m-%d %H:%M')}"
 
 class Comment(models.Model):
     yap = models.ForeignKey(Yap, on_delete=models.CASCADE, related_name='comments')

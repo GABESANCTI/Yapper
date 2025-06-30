@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% load tz %}
 
 {% block title %}Para Você{% endblock %}
 
@@ -25,7 +26,11 @@
                 <p class="card-text">
                     {# Link para o perfil do usuário #}
                     <a href="{% url 'core:user_profile' username=yap.user.username %}" class="fw-bold">@{{ yap.user.username }}</a>
-                    <small class="text-muted ms-2">{{ yap.created_at|date:"d M, Y H:i" }}</small>
+                    <small class="text-muted ms-2">
+                        {% localtime on %}
+                            {{ yap.created_at|date:"d M, Y H:i" }}
+                        {% endlocaltime %}
+                    </small>
                 </p>
                 {# O corpo do Yap é um link clicável para os detalhes #}
                 <a href="{% url 'yaps:yap_detail' pk=yap.id %}" class="text-decoration-none text-dark">
@@ -66,7 +71,7 @@
         <p>Siga alguns usuários para ver Yaps aqui!</p>
     {% endfor %}
 
-    {# Script para lidar com as curtidas de Yaps via AJAX (o mesmo de general_timeline.html) #}
+    {# Script para lidar com as curtidas de Yaps via AJAX #}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.like-button').forEach(button => {

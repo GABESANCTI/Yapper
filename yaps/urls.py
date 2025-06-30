@@ -14,5 +14,9 @@ urlpatterns = [
     #path('yap/<int:pk>/unlike/', views.unlike_yap, name='unlike_yap'),
     path('comment/<int:pk>/like/', views.like_comment, name='like_comment'),
     #path('comment/<int:pk>/unlike/', views.unlike_comment, name='unlike_comment'),
+     # Curtir Comentários (com AJAX)
     path('comment/<int:pk>/delete/', views.delete_comment, name='delete_comment'),
+    
+    # Apagar Comentário
+    path('comment/<int:pk>/delete/', views.delete_comment, name='delete_comment')
 ]
