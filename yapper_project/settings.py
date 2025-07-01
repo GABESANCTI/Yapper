@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-e3s2+ef@o_%%s=b&p4hb6z9b_x96f=%#s&w4tlqnd^%wg!0f99
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.0.16']
+ALLOWED_HOSTS = ['192.168.0.16','192.168.30.107', '172.20.21.46','palacio.mt', 'lemon-hairs-doubt.loca.lt']
 AUTH_USER_MODEL = 'core.User'
 LOGIN_URL = '/accounts/login'
 LOGIN_REDIRECT_URL = '/'

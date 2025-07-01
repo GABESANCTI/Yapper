@@ -2,12 +2,14 @@
 {% load crispy_forms_tags %}
 {% load tz %}
 
-{% block title %}Yap de {{ yap.user.username }}{% endblock %}
+{% block title %}Detalhes do Yap{% endblock %}
 
 {% block content %}
+    <h2 class="mb-4">Detalhes do Yap</h2>
+
     <div class="card mb-4 shadow-sm fade-in">
         <div class="card-body">
-            {# NOVO: Foto de perfil no Yap principal #}
+            {# Foto de perfil no Yap principal #}
             <div class="d-flex align-items-center mb-2">
                 <a href="{% url 'core:user_profile' username=yap.user.username %}">
                     {% if yap.user.profile_picture %}
@@ -34,46 +36,48 @@
                 Views: {{ yap.views_count }}
             </p>
             <div class="d-flex justify-content-between align-items-center">
+                {# Botão de Curtir Yap #}
                 <div class="like-section" data-yap-id="{{ yap.id }}">
                     {% if user.is_authenticated %}
                         <button class="btn btn-sm {% if user in yap.likes.all %}btn-danger{% else %}btn-outline-danger{% endif %} like-button">
-                            <i class="bi bi-heart-fill"></i> Curtir
+                            <i class="bi bi-heart-fill"></i> Curtir Yap
                         </button>
                     {% else %}
                         <button class="btn btn-sm btn-outline-secondary" disabled>
-                            <i class="bi bi-heart-fill"></i> Curtir
+                            <i class="bi bi-heart-fill"></i> Curtir Yap
                         </button>
                     {% endif %}
                     <span class="like-count ms-2">{{ yap.likes.count }}</span>
                 </div>
+
                 <div>
-                    <span class="btn btn-sm btn-outline-primary"><i class="bi bi-chat-fill"></i> Comentários ({{ yap.comments.count }})</span>
+                    {# Botão que abre o modal de comentário (NOVO POSICIONAMENTO E FUNCIONALIDADE) #}
+                    {% if user.is_authenticated %}
+                        <button type="button" class="btn btn-sm btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#commentModal">
+                            <i class="bi bi-chat-fill"></i> Comentar ({{ yap.comments.count }})
+                        </button>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-sm btn-outline-primary me-2">
+                            <i class="bi bi-chat-fill"></i> Comentar ({{ yap.comments.count }})
+                        </a>
+                    {% endif %}
+
                     {% if user.is_authenticated and yap.user == user %}
-                        <a href="{% url 'yaps:delete_yap' pk=yap.id %}" class="btn btn-sm btn-outline-danger ms-2" onclick="return confirm('Tem certeza que deseja apagar este Yap?');">Apagar</a>
+                        <a href="{% url 'yaps:delete_yap' pk=yap.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja apagar este Yap?');">Apagar Yap</a>
                     {% endif %}
                 </div>
             </div>
         </div>
     </div>
 
-    <h3 class="mt-5">Comentários</h3>
+    <h3 class="mt-5 mb-3">Comentários</h3>
+    {# REMOVENDO O CARD DE INSERÇÃO DE COMENTÁRIO AQUI #}
+    {# O formulário de comentários foi movido para o modal #}
     
-    {% if user.is_authenticated %}
-        <div class="card mb-4 shadow-sm">
-            <div class="card-body">
-                <form method="post">
-                    {% csrf_token %}
-                    {{ form|crispy }}
-                    <button type="submit" class="btn btn-primary mt-2">Comentar</button>
-                </form>
-            </div>
-        </div>
-    {% endif %}
-
     {% for comment in comments %}
         <div class="card mb-3 shadow-sm fade-in">
             <div class="card-body">
-                {# NOVO: Foto de perfil nos comentários #}
+                {# Foto de perfil nos comentários #}
                 <div class="d-flex align-items-center mb-2">
                     <a href="{% url 'core:user_profile' username=comment.user.username %}">
                         {% if comment.user.profile_picture %}
@@ -97,32 +101,55 @@
                 
                 <p class="card-text">{{ comment.content }}</p>
                 <div class="d-flex justify-content-between align-items-center">
-                    <div class="like-section" data-comment-id="{{ comment.id }}">
+                    {# Botão de Curtir Comentário #}
+                    <div class="like-comment-section" data-comment-id="{{ comment.id }}">
                         {% if user.is_authenticated %}
                             <button class="btn btn-sm {% if user in comment.likes.all %}btn-info{% else %}btn-outline-info{% endif %} like-comment-button">
-                                <i class="bi bi-heart-fill"></i> Curtir
+                                <i class="bi bi-heart"></i> Curtir Comentário
                             </button>
                         {% else %}
                             <button class="btn btn-sm btn-outline-secondary" disabled>
-                                <i class="bi bi-heart-fill"></i> Curtir
+                                <i class="bi bi-heart"></i> Curtir Comentário
                             </button>
                         {% endif %}
                         <span class="like-count ms-2">{{ comment.likes.count }}</span>
                     </div>
-                    {% if user.is_authenticated and (comment.user == user or comment.yap.user == user) %}
-                        <a href="{% url 'yaps:delete_comment' pk=comment.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja apagar este comentário?');">Apagar</a>
+
+                    {% if user.is_authenticated and comment.user == user or user.is_authenticated and comment.yap.user == user %}
+                        <a href="{% url 'yaps:delete_comment' pk=comment.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja apagar este comentário?');">Apagar</a>
                     {% endif %}
                 </div>
             </div>
         </div>
     {% empty %}
-        <p>Nenhum comentário ainda.</p>
+        <p>Nenhum comentário ainda. Seja o primeiro a comentar!</p>
     {% endfor %}
+
+    {# Modal para Comentar (NOVO POSICIONAMENTO) #}
+    <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="commentModalLabel">Comentar em @{{ yap.user.username }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">Yap: "{{ yap.content|truncatechars:50 }}"</p>
+                    <form id="commentForm" method="post" action="{% url 'yaps:yap_detail' pk=yap.pk %}">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-success mt-2">Comentar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {# Scripts para lidar com as curtidas via AJAX #}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.like-button').forEach(button => {
+            // Script para Curtir/Descurtir Yaps
+            document.querySelectorAll('.like-yap-button').forEach(button => {
                 button.addEventListener('click', function() {
                     const yapId = this.closest('.like-section').dataset.yapId;
                     const likeCountSpan = this.closest('.like-section').querySelector('.like-count');
@@ -151,10 +178,11 @@
                 });
             });
 
+            // Script para Curtir/Descurtir Comentários
             document.querySelectorAll('.like-comment-button').forEach(button => {
                 button.addEventListener('click', function() {
-                    const commentId = this.closest('.like-section').dataset.commentId;
-                    const likeCountSpan = this.closest('.like-section').querySelector('.like-count');
+                    const commentId = this.closest('.like-comment-section').dataset.commentId;
+                    const likeCountSpan = this.closest('.like-comment-section').querySelector('.like-count');
                     const likeButton = this;
 
                     fetch(`/comment/${commentId}/like/`, {
