@@ -21,7 +21,7 @@
         {# Adicione as classes shadow-sm, rounded e fade-in para o visual #}
         <div class="card mb-3 shadow-sm rounded fade-in">
             <div class="card-body">
-                {# NOVO: Exibe a miniatura da foto de perfil ao lado do nome #}
+                {# Exibe a miniatura da foto de perfil ao lado do nome #}
                 <div class="d-flex align-items-center mb-2">
                     <a href="{% url 'core:user_profile' username=yap.user.username %}" class="me-2">
                         {% if yap.user.profile_picture %}

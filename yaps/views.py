@@ -5,11 +5,11 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.db.models import Count, F
 from django.contrib import messages
-from django.core.paginator import Paginator
+# from django.core.paginator import Paginator # Removido, pois não será usado para paginação
 
 from .models import Yap, Comment, Like
 from .forms import YapForm, CommentForm
-from core.models import User
+from core.models import User # Importado para uso no projeto, se necessário
 
 @login_required
 def general_timeline(request):
@@ -50,7 +50,6 @@ def create_yap(request):
             yap.save()
             return redirect('yaps:general_timeline')
     else:
-        # AQUI ESTÁ A CORREÇÃO: Inicialize o formulário para requisições GET
         form = YapForm() 
         
     return render(request, 'yaps/create_yap.html', {'form': form})
@@ -58,15 +57,15 @@ def create_yap(request):
 def yap_detail(request, pk):
     yap = get_object_or_404(Yap, pk=pk)
     
+    # Incrementa o contador de visualizações
+    # Usamos F() para evitar race conditions em acessos simultâneos
     yap.views_count = F('views_count') + 1
     yap.save(update_fields=['views_count'])
-    yap.refresh_from_db()
+    yap.refresh_from_db() # Atualiza o objeto com o novo valor
 
-    comments = yap.comments.all().annotate(
-        likes_count=Count('likes', distinct=True)
-    ).select_related('user')
+    form = CommentForm() # Inicializa o formulário de comentário
 
-    form = CommentForm()
+    # Processa o formulário de comentário se for POST
     if request.method == 'POST' and request.user.is_authenticated:
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -74,8 +73,15 @@ def yap_detail(request, pk):
             comment.yap = yap
             comment.user = request.user
             comment.save()
-            return redirect('yaps:yap_detail', pk=pk)
+            # Redireciona de volta para a página de detalhes do Yap para evitar re-envio
+            return redirect('yaps:yap_detail', pk=yap.pk)
+    
+    # Recupera os comentários, anota o número de curtidas e os ordena
+    comments = yap.comments.all().annotate(
+        num_likes=Count('likes', distinct=True) # Anota a contagem de likes
+    ).order_by('-num_likes', 'created_at') # Ordena por mais curtidos, depois por mais antigos (se likes iguais)
 
+    # Verifica se o usuário logado já curtiu este Yap
     is_liked = False
     if request.user.is_authenticated:
         is_liked = Like.objects.filter(user=request.user, yap=yap).exists()
@@ -125,6 +131,9 @@ def delete_yap(request, pk):
     yap = get_object_or_404(Yap, pk=pk)
     if request.user == yap.user:
         yap.delete()
+        messages.success(request, "Yap apagado com sucesso!")
+    else:
+        messages.error(request, "Você não tem permissão para apagar este Yap.")
     return redirect('yaps:general_timeline')
 
 @login_required

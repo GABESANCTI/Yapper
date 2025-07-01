@@ -8,6 +8,9 @@
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
+    {# NOVO: Animate.css para animações de ícones #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
     {# CSS para header fixo e animação de cards #}
     <style>
         body {
@@ -21,6 +24,46 @@
         .card.fade-in {
             animation: fadeIn 0.5s ease-in-out;
         }
+
+        /* NOVO: Estilos para transições de botões */
+        .btn {
+            transition: all 0.2s ease-in-out; /* Transição suave para todas as propriedades */
+        }
+        .btn:hover {
+            transform: scale(1.05); /* Aumenta um pouco o botão ao passar o mouse */
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+        }
+        .btn:active {
+            transform: scale(0.95); /* Diminui um pouco ao clicar */
+        }
+        <head>
+    <style>
+        html {
+            scroll-behavior: smooth; /* NOVO: Torna o scroll suave */
+        }
+        body {
+            padding-top: 56px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .card.fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+        }
+        .btn:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
     </style>
 </head>
 <body>
@@ -43,7 +86,7 @@
                     {% endif %}
                 </ul>
                 
-                {# NOVO: Botão de Pesquisa que abre um Modal #}
+                {# Botão de Pesquisa que abre um Modal #}
                 <ul class="navbar-nav me-3">
                     <li class="nav-item">
                         <button class="nav-link btn btn-link" type="button" data-bs-toggle="modal" data-bs-target="#searchModal" style="padding-top: 8px;">

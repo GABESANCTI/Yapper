@@ -8,7 +8,6 @@ class User(AbstractUser):
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     profile_views = models.PositiveIntegerField(default=0) # Contador de visualizações
 
-    # Relação de seguidores/seguindo
     # symmetrical=False permite que A siga B sem que B siga A automaticamente
     following = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
 

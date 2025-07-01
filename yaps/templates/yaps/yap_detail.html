@@ -51,7 +51,7 @@
                 </div>
 
                 <div>
-                    {# Botão que abre o modal de comentário (NOVO POSICIONAMENTO E FUNCIONALIDADE) #}
+                    {# Botão que abre o modal de comentário #}
                     {% if user.is_authenticated %}
                         <button type="button" class="btn btn-sm btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#commentModal">
                             <i class="bi bi-chat-fill"></i> Comentar ({{ yap.comments.count }})
@@ -71,7 +71,6 @@
     </div>
 
     <h3 class="mt-5 mb-3">Comentários</h3>
-    {# REMOVENDO O CARD DE INSERÇÃO DE COMENTÁRIO AQUI #}
     {# O formulário de comentários foi movido para o modal #}
     
     {% for comment in comments %}
@@ -125,7 +124,7 @@
         <p>Nenhum comentário ainda. Seja o primeiro a comentar!</p>
     {% endfor %}
 
-    {# Modal para Comentar (NOVO POSICIONAMENTO) #}
+    {# Modal para Comentar #}
     <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
