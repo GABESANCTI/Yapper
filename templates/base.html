@@ -32,10 +32,12 @@
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'core:user_profile' username=user.username %}">@{{ user.username }}</a>
+                            {# Exibe o display_name se existir, senão usa o username #}
+                            <a class="nav-link" href="{% url 'core:user_profile' username=user.username %}">
+                                {% if user.display_name %}{{ user.display_name }} <small class="text-muted">@{{ user.username }}</small>{% else %}@{{ user.username }}{% endif %}
+                            </a>
                         </li>
                         <li class="nav-item">
-                            {# Botão de Logout via POST #}
                             <form action="{% url 'logout' %}" method="post" class="d-inline">
                                 {% csrf_token %}
                                 <button type="submit" class="nav-link btn btn-link text-decoration-none text-secondary" style="padding-top: 8px;">Sair</button>
