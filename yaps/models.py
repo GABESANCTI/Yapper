@@ -3,12 +3,12 @@ from django.conf import settings # Para referenciar o modelo de usuário do proj
 
 class Yap(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='yaps')
-    content = models.TextField(max_length=280) # Limite de caracteres como no Twitter
+    content = models.TextField(max_length=280) 
     created_at = models.DateTimeField(auto_now_add=True)
     views_count = models.PositiveIntegerField(default=0)
-    ordering = ['-created_at'] # Ordena os yaps pelo mais recente
+    ordering = ['-created_at'] # Ordena os yaps pelo mais recente n mexe pq ele zoa tudo
+    image = models.ImageField(upload_to='yap_pics/', blank=True, null=True)
 
-    # A funcionalidade de likes será gerenciada inteiramente pelo modelo 'Like' explícito.
     # likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_yaps', blank=True)
     class Meta:
         def __str__(self):

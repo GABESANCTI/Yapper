@@ -20,7 +20,7 @@
     {% for yap in yaps %}
         <div class="card mb-3 shadow-sm rounded fade-in">
             <div class="card-body">
-                {# NOVO: Exibe a miniatura da foto de perfil ao lado do nome #}
+                {# Exibe a miniatura da foto de perfil ao lado do nome #}
                 <div class="d-flex align-items-center mb-2">
                     <a href="{% url 'core:user_profile' username=yap.user.username %}" class="me-2">
                         {% if yap.user.profile_picture %}
@@ -45,7 +45,13 @@
                 <a href="{% url 'yaps:yap_detail' pk=yap.id %}" class="text-decoration-none text-dark">
                     <p class="card-text fs-5">{{ yap.content }}</p>
                 </a>
-                <p class="card-text text-muted small">
+                {# Exibe a imagem do Yap, se existir #}
+                {% if yap.image %}
+                    <div class="mt-2 text-center">
+                        <img src="{{ yap.image.url }}" class="img-fluid rounded" style="max-height: 300px; object-fit: cover;" alt="Imagem do Yap">
+                    </div>
+                {% endif %}
+                <p class="card-text text-muted small mt-2">
                     Views: {{ yap.views_count }}
                 </p>
 
@@ -79,6 +85,59 @@
     {% endfor %}
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.like-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const yapId = this.closest('.like-section').dataset.yapId;
+                    const likeCountSpan = this.closest('.like-section').querySelector('.like-count');
+                    const likeButton = this;
+
+                    fetch(`/yap/${yapId}/like/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        likeCountSpan.textContent = data.total_likes;
+                        if (data.liked) {
+                            likeButton.classList.remove('btn-outline-danger');
+                            likeButton.classList.add('btn-danger');
+                        } else {
+                            likeButton.classList.remove('btn-danger');
+                            likeButton.classList.add('btn-outline-danger');
+                        }
+                    })
+                    .catch(error => console.error('Erro ao curtir Yap:', error));
+                });
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        // Script para lidar com as curtidas de Yaps via AJAX
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.like-button').forEach(button => {
                 button.addEventListener('click', function() {

@@ -1,15 +1,14 @@
-# yaps/views.py
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.db.models import Count, F
 from django.contrib import messages
-# from django.core.paginator import Paginator # Removido, pois não será usado para paginação
-
+# from django.core.paginator import Paginator  n precisa de paginação por enquanto só se ,ograr pra DRF
 from .models import Yap, Comment, Like
 from .forms import YapForm, CommentForm
-from core.models import User # Importado para uso no projeto, se necessário
+from core.models import User 
 
 @login_required
 def general_timeline(request):
@@ -40,19 +39,25 @@ def foryou_timeline(request):
     }
     return render(request, 'yaps/foryou_timeline.html', context)
 
+
+@login_required
+
 @login_required
 def create_yap(request):
     if request.method == 'POST':
-        form = YapForm(request.POST)
+        
+        form = YapForm(request.POST, request.FILES) 
         if form.is_valid():
             yap = form.save(commit=False)
             yap.user = request.user
             yap.save()
+            messages.success(request, "Yap criado com sucesso!")
             return redirect('yaps:general_timeline')
     else:
         form = YapForm() 
         
     return render(request, 'yaps/create_yap.html', {'form': form})
+
 
 def yap_detail(request, pk):
     yap = get_object_or_404(Yap, pk=pk)
@@ -61,7 +66,7 @@ def yap_detail(request, pk):
     # Usamos F() para evitar race conditions em acessos simultâneos
     yap.views_count = F('views_count') + 1
     yap.save(update_fields=['views_count'])
-    yap.refresh_from_db() # Atualiza o objeto com o novo valor
+    yap.refresh_from_db() 
 
     form = CommentForm() # Inicializa o formulário de comentário
 

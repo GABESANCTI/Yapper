@@ -16,7 +16,7 @@
 
             {# Exibe o display_name se existir, senão usa o username #}
             <h2 class="card-title">
-                {% if profile_user.display_name %}{{ profile_user.display_name }} <small class="text-muted"><br>@{{ profile_user.username }}</small>{% else %}@{{ profile_user.username }}{% endif %}
+                {% if profile_user.display_name %}{{ profile_user.display_name }} <small class="text-muted">@{{ profile_user.username }}</small>{% else %}@{{ profile_user.username }}{% endif %}
             </h2>
             
             {# Biografia #}
@@ -77,7 +77,13 @@
                 <a href="{% url 'yaps:yap_detail' pk=yap.id %}" class="text-decoration-none text-dark">
                     <p class="card-text fs-5">{{ yap.content }}</p>
                 </a>
-                <p class="card-text text-muted small">
+                {# Exibe a imagem do Yap, se existir #}
+                {% if yap.image %}
+                    <div class="mt-2 text-center">
+                        <img src="{{ yap.image.url }}" class="img-fluid rounded" style="max-height: 300px; object-fit: cover;" alt="Imagem do Yap">
+                    </div>
+                {% endif %}
+                <p class="card-text text-muted small mt-2">
                     Views: {{ yap.views_count }}
                 </p>
 

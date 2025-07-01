@@ -8,11 +8,14 @@
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
-    {# NOVO: Animate.css para animações de ícones #}
+    {# Animate.css para animações de ícones (curtir) #}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
-    {# CSS para header fixo e animação de cards #}
+    {# CSS para header fixo, smooth scroll, animação de cards e botões #}
     <style>
+        html {
+            scroll-behavior: smooth; /* Torna o scroll suave */
+        }
         body {
             /* Adiciona um padding no topo do body para compensar o header fixo */
             padding-top: 56px; /* Altura padrão da navbar do Bootstrap */
@@ -25,7 +28,6 @@
             animation: fadeIn 0.5s ease-in-out;
         }
 
-        /* NOVO: Estilos para transições de botões */
         .btn {
             transition: all 0.2s ease-in-out; /* Transição suave para todas as propriedades */
         }
@@ -36,34 +38,6 @@
         .btn:active {
             transform: scale(0.95); /* Diminui um pouco ao clicar */
         }
-        <head>
-    <style>
-        html {
-            scroll-behavior: smooth; /* NOVO: Torna o scroll suave */
-        }
-        body {
-            padding-top: 56px;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .card.fade-in {
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        .btn {
-            transition: all 0.2s ease-in-out;
-        }
-        .btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
-        }
-        .btn:active {
-            transform: scale(0.95);
-        }
-    </style>
-</head>
     </style>
 </head>
 <body>
@@ -169,11 +143,15 @@
                 </div>
                 <div class="modal-body">
                     {# O formulário de Yap será renderizado aqui #}
-                    <form id="yapForm" method="post" action="{% url 'yaps:create_yap' %}">
+                    <form id="yapForm" method="post" action="{% url 'yaps:create_yap' %}" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="mb-3">
                             <label for="id_content" class="form-label">O que está acontecendo?</label>
                             <textarea name="content" id="id_content" rows="3" class="form-control" placeholder="Digite seu Yap..." required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_image" class="form-label">Adicionar Imagem (opcional)</label>
+                            <input type="file" name="image" id="id_image" class="form-control">
                         </div>
                         <button type="submit" class="btn btn-primary">Yappar</button>
                     </form>

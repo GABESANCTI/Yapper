@@ -46,7 +46,13 @@
                 <a href="{% url 'yaps:yap_detail' pk=yap.id %}" class="text-decoration-none text-dark">
                     <p class="card-text fs-5">{{ yap.content }}</p>
                 </a>
-                <p class="card-text text-muted small">
+                {# Exibe a imagem do Yap, se existir #}
+                {% if yap.image %}
+                    <div class="mt-2 text-center">
+                        <img src="{{ yap.image.url }}" class="img-fluid rounded" style="max-height: 300px; object-fit: cover;" alt="Imagem do Yap">
+                    </div>
+                {% endif %}
+                <p class="card-text text-muted small mt-2">
                     Views: {{ yap.views_count }}
                 </p>
 
@@ -80,6 +86,63 @@
     {% endfor %}
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.like-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const yapId = this.closest('.like-section').dataset.yapId;
+                    const likeCountSpan = this.closest('.like-section').querySelector('.like-count');
+                    const likeButton = this;
+
+                    fetch(`/yap/${yapId}/like/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        likeCountSpan.textContent = data.total_likes;
+                        if (data.liked) {
+                            likeButton.classList.remove('btn-outline-danger');
+                            likeButton.classList.add('btn-danger');
+                        } else {
+                            likeButton.classList.remove('btn-danger');
+                            likeButton.classList.add('btn-outline-danger');
+                        }
+                    })
+                    .catch(error => console.error('Erro ao curtir Yap:', error));
+                });
+            });
+        });
+    </script>
+{% endblock %}
+{% block extra_scripts %}
+    <script>
+        // Script para animação de fade-in
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.fade-in');
+            cards.forEach(card => {
+                card.classList.add('show');
+            });
+        });
+    </script>
+{% endblock %}
+{% block extra_css %}
+    <style>
+        .fade-in {
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .fade-in.show {
+            opacity: 1;
+        }
+    </style>
+{% endblock %}
+{% block extra_js %}
+    <script>
+        // Script para lidar com as curtidas de Yaps via AJAX
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.like-button').forEach(button => {
                 button.addEventListener('click', function() {
