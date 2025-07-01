@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count, F
+from django.db.models import Count, F ,Q  #Q-> query F-> n lembro mas era importante
 from .models import User
 from yaps.models import Yap
 
@@ -23,7 +23,6 @@ def register(request):
     else:
         form = CustomUserCreationForm()
     return render(request, 'core/register.html', {'form': form})
-
 
 @login_required
 def edit_profile(request):
@@ -89,3 +88,21 @@ def unfollow_user(request, username):
     if request.user != user_to_unfollow:
         request.user.following.remove(user_to_unfollow)
     return redirect('core:user_profile', username=username)
+
+#my search view engine 
+
+def search(request):
+    query = request.GET.get('q')
+    results = User.objects.none() # Inicializa um queryset vazio
+    
+    if query:
+        # Lógica para buscar usuários por username ou display_name (case-insensitive)
+        results = User.objects.filter(
+            Q(username__icontains=query) | Q(display_name__icontains=query)
+        ).distinct()
+        
+    context = {
+        'query': query,
+        'results': results,
+    }
+    return render(request, 'core/search_results.html', context)

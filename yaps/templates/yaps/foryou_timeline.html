@@ -8,33 +8,40 @@
     <h2 class="mb-4">Para Você</h2>
 
     {% if user.is_authenticated %}
-    <div class="card mb-4">
-        <div class="card-body">
-            <h5 class="card-title">Criar novo Yap</h5>
-            <form method="post" action="{% url 'yaps:create_yap' %}">
-                {% csrf_token %}
-                {{ form|crispy }}
-                <button type="submit" class="btn btn-primary mt-2">Yappar</button>
-            </form>
-        </div>
-    </div>
+        <p class="text-muted mb-4">Veja o que os usuários que você segue estão Yapando!</p>
+    {% else %}
+        <p class="text-muted mb-4">Faça login para ver o que os usuários que você segue estão Yapando!</p>
     {% endif %}
 
+    {% if not yaps %}
+        <p class="text-muted">Siga alguns usuários para ver Yaps aqui!</p>
+    {% endif %}
+    
     {% for yap in yaps %}
-        <div class="card mb-3">
+        <div class="card mb-3 shadow-sm rounded fade-in">
             <div class="card-body">
-                <p class="card-text">
-                    {# Link para o perfil do usuário, exibindo display_name #}
-                    <a href="{% url 'core:user_profile' username=yap.user.username %}" class="fw-bold">
-                        {% if yap.user.display_name %}{{ yap.user.display_name }} <small class="text-muted">@{{ yap.user.username }}</small>{% else %}@{{ yap.user.username }}{% endif %}
+                {# NOVO: Exibe a miniatura da foto de perfil ao lado do nome #}
+                <div class="d-flex align-items-center mb-2">
+                    <a href="{% url 'core:user_profile' username=yap.user.username %}" class="me-2">
+                        {% if yap.user.profile_picture %}
+                            <img src="{{ yap.user.profile_picture.url }}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;" alt="Foto de perfil">
+                        {% else %}
+                            <img src="https://via.placeholder.com/40" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;" alt="Foto de perfil padrão">
+                        {% endif %}
                     </a>
-                    <small class="text-muted ms-2">
-                        {% localtime on %}
-                            {{ yap.created_at|date:"d M, Y H:i" }}
-                        {% endlocaltime %}
-                    </small>
-                </p>
-                {# O corpo do Yap é um link clicável para os detalhes #}
+                    <div>
+                        <a href="{% url 'core:user_profile' username=yap.user.username %}" class="fw-bold text-decoration-none text-dark">
+                            {% if yap.user.display_name %}{{ yap.user.display_name }}{% else %}@{{ yap.user.username }}{% endif %}
+                        </a>
+                        <small class="text-muted d-block">
+                            @{{ yap.user.username }} · 
+                            {% localtime on %}
+                                {{ yap.created_at|date:"d M, Y H:i" }}
+                            {% endlocaltime %}
+                        </small>
+                    </div>
+                </div>
+
                 <a href="{% url 'yaps:yap_detail' pk=yap.id %}" class="text-decoration-none text-dark">
                     <p class="card-text fs-5">{{ yap.content }}</p>
                 </a>
@@ -43,7 +50,6 @@
                 </p>
 
                 <div class="d-flex justify-content-between align-items-center">
-                    {# Botão de Curtir #}
                     <div class="like-section" data-yap-id="{{ yap.id }}">
                         {% if user.is_authenticated %}
                             <button class="btn btn-sm {% if user in yap.likes.all %}btn-danger{% else %}btn-outline-danger{% endif %} like-button">
@@ -54,13 +60,12 @@
                                 <i class="bi bi-heart-fill"></i> Curtir
                             </button>
                         {% endif %}
-                        <span class="like-count ms-2">{{ yap.likes_count }}</span>
+                        <span class="like-count ms-2">{{ yap.likes.count }}</span>
                     </div>
 
-                    {# Botão de Comentário #}
                     <div>
                         <a href="{% url 'yaps:yap_detail' pk=yap.id %}" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-chat-fill"></i> Comentar ({{ yap.comments_count }})
+                            <i class="bi bi-chat-fill"></i> Comentar ({{ yap.comments.count }})
                         </a>
                         {% if user.is_authenticated and yap.user == user %}
                             <a href="{% url 'yaps:delete_yap' pk=yap.id %}" class="btn btn-sm btn-outline-danger ms-2" onclick="return confirm('Tem certeza que deseja apagar este Yap?');">Apagar</a>
@@ -70,10 +75,9 @@
             </div>
         </div>
     {% empty %}
-        <p>Siga alguns usuários para ver Yaps aqui!</p>
+        <p>Nenhum Yap ainda. Seja o primeiro a Yappar!</p>
     {% endfor %}
 
-    {# Script para lidar com as curtidas de Yaps via AJAX #}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.like-button').forEach(button => {
