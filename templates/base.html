@@ -146,8 +146,8 @@
                     <form id="yapForm" method="post" action="{% url 'yaps:create_yap' %}" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <label for="id_content" class="form-label">O que está acontecendo?</label>
-                            <textarea name="content" id="id_content" rows="3" class="form-control" placeholder="Digite seu Yap..." required></textarea>
+                            <label for="id_content" class="form-label"></label> {# Rótulo removido via forms.py #}
+                            <textarea name="content" id="id_content" rows="3" class="form-control" placeholder="O que está acontecendo?" required></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="id_image" class="form-label">Adicionar Imagem (opcional)</label>

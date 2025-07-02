@@ -37,7 +37,13 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5" 
-
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake', # Um nome único para sua instância de cache
+        'TIMEOUT': 300, # Tempo em segundos (300s = 5 minutos). A piada será atualizada a cada 5 min.
+    }
+}
 INSTALLED_APPS = [
     'requests',  # APIs oublicas
     'crispy_forms', 

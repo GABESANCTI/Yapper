@@ -6,12 +6,21 @@
 
 {% block content %}
     <div class="card mb-4 shadow-sm fade-in">
-        <div class="card-body text-center">
-            {# Foto de Perfil #}
+        {# Banner do Perfil #}
+        {% if profile_user.banner_picture %}
+            <div style="height: 200px; overflow: hidden; position: relative;">
+                <img src="{{ profile_user.banner_picture.url }}" class="img-fluid w-100" style="object-fit: cover; height: 100%;" alt="Banner do Perfil">
+            </div>
+            <div class="card-body text-center" style="position: relative; margin-top: -75px;"> {# Ajusta a margem para sobrepor a foto de perfil no banner #}
+        {% else %}
+            <div class="card-body text-center"> {# Card-body padrão se não houver banner #}
+        {% endif %}
+
+            {# Foto de Perfil - POSICIONAMENTO AJUSTADO #}
             {% if profile_user.profile_picture %}
-                <img src="{{ profile_user.profile_picture.url }}" class="rounded-circle mb-3" alt="Foto de perfil" style="width: 150px; height: 150px; object-fit: cover;">
+                <img src="{{ profile_user.profile_picture.url }}" class="rounded-circle mb-3 border border-3 border-white" alt="Foto de perfil" style="width: 150px; height: 150px; object-fit: cover;">
             {% else %}
-                <img src="https://via.placeholder.com/150" class="rounded-circle mb-3" alt="Foto de perfil padrão" style="width: 150px; height: 150px; object-fit: cover;">
+                <img src="https://via.placeholder.com/150" class="rounded-circle mb-3 border border-3 border-white" alt="Foto de perfil padrão" style="width: 150px; height: 150px; object-fit: cover;">
             {% endif %}
 
             {# Exibe o display_name se existir, senão usa o username #}
