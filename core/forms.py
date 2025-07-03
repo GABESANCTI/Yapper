@@ -13,7 +13,7 @@ class CustomUserCreationForm(UserCreationForm):
 class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
-        # Adicione 'banner_picture' aos campos editáveis
+       
         fields = ['display_name', 'bio', 'profile_picture', 'banner_picture']
 
 class CustomAuthenticationForm(AuthenticationForm):

@@ -10,7 +10,7 @@ class YapForm(forms.ModelForm):
             'content': forms.Textarea(attrs={'rows': 3, 'placeholder': 'O que está acontecendo?'}),
         }
         labels = {
-            'content': '',  # Define o label de 'content' como vazio
+            'content': '',  # pra ignorar o lavel de 'content' como vazio
         }
 class CommentForm(forms.ModelForm):
     class Meta:

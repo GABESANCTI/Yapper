@@ -21,11 +21,11 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')), # URLs de autenticação do Django (login, logout, etc.)
-    path('', include('yaps.urls')),     # Inclui as URLs do app yaps (será sua homepage)
-    path('users/', include('core.urls')), # Inclui as URLs do app core (para perfil de usuário)
+    path('accounts/', include('django.contrib.auth.urls')), 
+    path('', include('yaps.urls')),    
+    path('users/', include('core.urls')),
 ]
 
-# **APENAS PARA DESENVOLVIMENTO:** Serve arquivos de mídia (fotos de perfil, etc.)
+# **APENAS PARA DESENVOLVIMENTO:** arquivos de mídia 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

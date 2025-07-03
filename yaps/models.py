@@ -1,5 +1,5 @@
 from django.db import models
-from django.conf import settings # Para referenciar o modelo de usuário do projet
+from django.conf import settings 
 
 class Yap(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='yaps')

@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count, F ,Q  #Q-> query F-> n lembro mas era importante
+from django.db.models import Count, F ,Q  #Q-> query F-> atomicidade nas buscas
 from .models import User
 from yaps.models import Yap
 
@@ -61,10 +61,10 @@ def user_profile(request, username):
         comments_count=Count('comments', distinct=True)
     ).order_by('-created_at')
 
-    # Verifica se o usuário logado está seguindo o usuário do perfil
+    
     is_following = False
     if request.user.is_authenticated:
-        # A relação ManyToManyField 'following' está no seu modelo User
+        #  ManyToManyField 'following' 
         is_following = request.user.following.filter(username=username).exists()
 
     context = {

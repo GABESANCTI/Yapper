@@ -1,4 +1,4 @@
-# yaps/views.py
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -7,7 +7,7 @@ from django.db.models import Count, F
 from django.contrib import messages
 import requests
 from datetime import datetime
-from django.utils import timezone # Para datetimes conscientes de fuso horário
+from django.utils import timezone 
 import random
 from django.core.cache import cache # Importa o sistema de cache do Django
 
@@ -15,7 +15,7 @@ from .models import Yap, Comment, Like
 from .forms import YapForm, CommentForm
 from core.models import User
 
-# --- FUNÇÃO PARA BUSCAR PIADAS DE PAI (DAD JOKES) ---
+# gestao dad jokes
 def get_dad_joke():
     """
     Busca uma piada aleatória do icanhazdadjoke.com, usando cache.
@@ -33,20 +33,20 @@ def get_dad_joke():
     
     try:
         response = requests.get(url, headers=headers)
-        response.raise_for_status() # Lança um erro para status de erro HTTP (4xx ou 5xx)
+        response.raise_for_status() 
         data = response.json()
         
         joke_data = {
             'id': data['id'],
             'content': data['joke'],
             'is_dad_joke': True,
-            'created_at': timezone.now(), # Usa datetime aware
+            'created_at': timezone.now(), 
             'username': 'DadJokeBot',
             'profile_url': 'https://icanhazdadjoke.com/',
             'is_yap': False
         }
         
-        # Armazena a piada no cache por 5 minutos (300 segundos)
+        # Armazena a piada no cache por 5 minutos
         cache.set('dad_joke_cache_key', joke_data, 5 * 60)
         return joke_data
 
@@ -63,10 +63,10 @@ def get_item_creation_time(item):
         return item.created_at
     elif isinstance(item, dict) and 'created_at' in item: # Se for um dicionário (Piada)
         return item['created_at']
-    return datetime.min # Valor de fallback para itens sem data (coloca-os no final)
+    return datetime.min 
 
 
-# --- VIEWS PRINCIPAIS DO APLICATIVO ---
+
 
 @login_required
 def general_timeline(request):
@@ -84,7 +84,7 @@ def general_timeline(request):
         combined_timeline.append(yap)
     
     # Adiciona uma piada aleatória (cacheada) na lista combinada
-    # Apenas 1 piada por refresh, conforme solicitado
+
     num_jokes_to_add = 1 
     for _ in range(num_jokes_to_add):
         joke = get_dad_joke() # Esta chamada agora é cacheada
@@ -96,7 +96,7 @@ def general_timeline(request):
 
 
     context = {
-        'yaps': combined_timeline, # 'yaps' no template agora contém Yaps E Piadas
+        'yaps': combined_timeline, 
         'form': YapForm(), # O formulário para criar Yap
     }
     return render(request, 'yaps/general_timeline.html', context)
@@ -120,7 +120,7 @@ def foryou_timeline(request):
 @login_required
 def create_yap(request):
     if request.method == 'POST':
-        form = YapForm(request.POST, request.FILES) # Com request.FILES para imagem
+        form = YapForm(request.POST, request.FILES) 
         if form.is_valid():
             yap = form.save(commit=False)
             yap.user = request.user
@@ -128,14 +128,14 @@ def create_yap(request):
             messages.success(request, "Yap criado com sucesso!")
             return redirect('yaps:general_timeline')
     else:
-        form = YapForm() # Inicializa o formulário para requisições GET
+        form = YapForm() #  formulário para requisições GET
         
     return render(request, 'yaps/create_yap.html', {'form': form})
 
 def yap_detail(request, pk):
     yap = get_object_or_404(Yap, pk=pk)
     
-    # Incrementa o contador de visualizações
+   
     yap.views_count = F('views_count') + 1
     yap.save(update_fields=['views_count'])
     yap.refresh_from_db()
@@ -151,12 +151,12 @@ def yap_detail(request, pk):
             messages.success(request, "Comentário adicionado com sucesso!")
             return redirect('yaps:yap_detail', pk=yap.pk)
     
-    # Recupera os comentários, anota o número de curtidas e os ordena
+    # Recupera os comentários, anota o número de curtidas e os ordena (ordena por mais curtidos, depois por mais antigos se nº likes iguais)
     comments = yap.comments.all().annotate(
-        num_likes=Count('likes', distinct=True) # Anota a contagem de likes
-    ).order_by('-num_likes', 'created_at') # Ordena por mais curtidos, depois por mais antigos (se likes iguais)
+        num_likes=Count('likes', distinct=True) 
+    ).order_by('-num_likes', 'created_at') # O
 
-    # Verifica se o usuário logado já curtiu este Yap
+  
     is_liked = False
     if request.user.is_authenticated:
         is_liked = Like.objects.filter(user=request.user, yap=yap).exists()
