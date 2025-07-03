@@ -1,3 +1,4 @@
+{% load static %} 
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -7,15 +8,17 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
-    {# Animate.css para animações de ícones (curtir) #}
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
-    {# CSS para header fixo, smooth scroll, animação de cards e botões #}
+
+    <link rel="stylesheet" href="{% static 'core/style.css' %}"> 
+    {# CSS do Dark Mode global #}
+    <link rel="stylesheet" href="{% static 'css/dark_mode.css' %}"> 
+
+    
     <style>
-        html {
-            scroll-behavior: smooth; /* Torna o scroll suave */
-        }
+        /* colocar no static: html*/  { scroll-behavior: smooth; } 
         body {
             /* Adiciona um padding no topo do body para compensar o header fixo */
             padding-top: 56px; /* Altura padrão da navbar do Bootstrap */
@@ -29,22 +32,25 @@
         }
 
         .btn {
-            transition: all 0.2s ease-in-out; /* Transição suave para todas as propriedades */
+            transition: all 0.2s ease-in-out;
         }
         .btn:hover {
-            transform: scale(1.05); /* Aumenta um pouco o botão ao passar o mouse */
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+            transform: scale(1.05);
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
         }
         .btn:active {
-            transform: scale(0.95); /* Diminui um pouco ao clicar */
+            transform: scale(0.95);
         }
     </style>
 </head>
-<body>
-    {# O header fica fixo no topo #}
+<body class="d-flex flex-column min-vh-100">
+
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'yaps:general_timeline' %}">Yapper</a>
+            {# Yapper logo #}
+            <a class="navbar-brand" href="{% url 'yaps:general_timeline' %}">
+                <img src="{% static 'images/logo_yapper.png' %}" alt="Yapper Logo" style="height: 35px;"> 
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -70,6 +76,13 @@
                 </ul>
 
                 <ul class="navbar-nav">
+                    {# Botão Dark Mode #}
+                    <li class="nav-item me-2">
+                        <button id="themeToggle" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-moon-fill d-none"></i> {# Ícone de lua #}
+                            <i class="bi bi-sun-fill d-none"></i> {# Ícone de sol #}
+                        </button>
+                    </li>
                     {% if user.is_authenticated %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'core:user_profile' username=user.username %}">Meu Perfil</a>
@@ -93,8 +106,7 @@
         </div>
     </nav>
 
-    {# O contêiner de conteúdo agora tem um padding-top para o header fixo #}
-    <div class="container mt-4">
+    <div class="container my-auto">
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }}">
@@ -108,14 +120,14 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-    {# Botão flutuante para Nova Postagem #}
+    {#  Nova Postagem #}
     {% if user.is_authenticated %}
     <a href="#" class="btn btn-primary btn-lg rounded-circle shadow" style="position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; font-size: 2rem; display: flex; align-items: center; justify-content: center; z-index: 1000;" data-bs-toggle="modal" data-bs-target="#createYapModal">
         <i class="bi bi-plus"></i>
     </a>
     {% endif %}
 
-    {# Modal para Pesquisa #}
+    {#  Pesquisa #}
     <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -133,7 +145,7 @@
         </div>
     </div>
     
-    {# Modal para Criação de Yap #}
+    {# Criação de Yap #}
     <div class="modal fade" id="createYapModal" tabindex="-1" aria-labelledby="createYapModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -142,11 +154,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    {# O formulário de Yap será renderizado aqui #}
+
                     <form id="yapForm" method="post" action="{% url 'yaps:create_yap' %}" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <label for="id_content" class="form-label"></label> {# Rótulo removido via forms.py #}
+                            <label for="id_content" class="form-label"></label> 
                             <textarea name="content" id="id_content" rows="3" class="form-control" placeholder="O que está acontecendo?" required></textarea>
                         </div>
                         <div class="mb-3">
@@ -159,6 +171,55 @@
             </div>
         </div>
     </div>
+
+    {# Script Dark Mode #}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const body = document.body;
+            const moonIcon = themeToggle.querySelector('.bi-moon-fill');
+            const sunIcon = themeToggle.querySelector('.bi-sun-fill');
+            const navBar = document.querySelector('.navbar'); 
+
+            // Função para aplicar o tema
+            function applyTheme(theme) {
+                if (theme === 'dark') {
+                    body.classList.add('dark-mode');
+                    navBar.classList.remove('navbar-light', 'bg-light'); 
+                    navBar.classList.add('navbar-dark', 'bg-dark');     
+                    moonIcon.classList.remove('d-none');
+                    sunIcon.classList.add('d-none');
+                } else {
+                    body.classList.remove('dark-mode');
+                    navBar.classList.remove('navbar-dark', 'bg-dark'); 
+                    navBar.classList.add('navbar-light', 'bg-light');   
+                    moonIcon.classList.add('d-none');
+                    sunIcon.classList.remove('d-none');
+                }
+            }
+
+            // Checar preferência do usuário (localStorage ou sistema)
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                applyTheme(savedTheme);
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                applyTheme('dark');
+            } else {
+                applyTheme('light');
+            }
+
+            // Evento de clique no botão
+            themeToggle.addEventListener('click', function() {
+                if (body.classList.contains('dark-mode')) {
+                    applyTheme('light');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    applyTheme('dark');
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
+        });
+    </script>
 
 </body>
 </html>

@@ -1,17 +1,18 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% load static %} 
 
 {% block title %}Cadastro no Yapper{% endblock %}
 
 {% block content %}
-    <div class="row justify-content-center mt-5">
+    <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header text-center">
                     <h3>Criar sua conta Yapper</h3>
                 </div>
                 <div class="card-body">
-                    <form method="post" enctype="multipart/form-data"> {# IMPORTANTE: enctype para upload de arquivos #}
+                    <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ form|crispy }}
                         <div class="d-grid gap-2">
@@ -19,7 +20,7 @@
                         </div>
                     </form>
                     <p class="text-center mt-3">
-                        Já tem uma conta? <a href="{% url 'login' %}">Faça login</a>.
+                        Ja tem uma conta? <a href="{% url 'login' %}">Faca login</a>.
                     </p>
                 </div>
             </div>

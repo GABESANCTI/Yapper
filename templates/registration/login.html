@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% load static %} 
 
 {% block title %}Entrar no Yapper{% endblock %}
 
 {% block content %}
-    <div class="row justify-content-center mt-5">
+    <div class="row justify-content-center"> 
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header text-center">
@@ -19,10 +20,10 @@
                         </div>
                     </form>
                     <p class="text-center mt-3">
-                        Não tem uma conta? <a href="{% url 'core:register' %}">Cadastre-se aqui</a>.
+                        Nao tem uma conta? <a href="{% url 'core:register' %}">Cadastre-se aqui</a>.
                     </p>
                     <p class="text-center">
-                        <a href="{% url 'password_reset' %}">Esqueceu sua senha?</a>
+                        <a href="{% url 'password_reset' %}"></a>   {# n quero fazer o sistema de recuperação de senha, se tempo #}
                     </p>
                 </div>
             </div>

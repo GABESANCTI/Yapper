@@ -8,13 +8,13 @@
     <h2 class="mb-4">Timeline Geral</h2>
 
     {% if user.is_authenticated %}
-        <p class="text-muted mb-4">Veja todos os Yaps de todos os usuários e uma piada para alegrar o dia!</p>
+        <p class="text-muted mb-4">Veja todos os Yaps de todos os usuários!</p>
     {% else %}
-        <p class="text-muted mb-4">Faça login para ver e interagir com todos os Yaps da comunidade e piadas aleatórias!</p>
+        <p class="text-muted mb-4">Faça login para ver e interagir com todos os Yaps!</p>
     {% endif %}
 
     {% if not yaps %}
-        <p class="text-muted">Nenhum Yap ou Piada para exibir no momento. Seja o primeiro a Yappar!</p>
+        <p class="text-muted">Nenhum Yap no momento. Seja o primeiro a Yappar!</p>
     {% endif %}
     
     {% for item in yaps %} 
@@ -85,7 +85,7 @@
             </div>
         {# Lógica para exibir Piadas de Pai com card similar ao Yap #}
         {% elif item.is_dad_joke %}
-            <div class="card mb-3 shadow-sm rounded fade-in border-info"> {# Adicionei border-info para diferenciar #}
+            <div class="card mb-3 shadow-sm rounded fade-in border-info"> 
                 <div class="card-body">
                     {# Estrutura de foto de perfil/nome consistente com Yaps #}
                     <div class="d-flex align-items-center mb-2">
@@ -108,7 +108,7 @@
                         </div>
                     </div>
                     
-                    <p class="card-text fs-5"><strong>Piada:</strong> {{ item.content }}</p>
+                    <p class="card-text fs-5"><strong></strong> {{ item.content }}</p>
 
                     <div class="d-flex justify-content-between align-items-center mt-2">
                         <small class="text-muted">Fonte: icanhazdadjoke.com</small>
