@@ -41,11 +41,11 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         'LOCATION': 'unique-snowflake', # Um nome único para sua instância de cache
-        'TIMEOUT': 300, # Tempo em segundos (300s = 5 minutos). A piada será atualizada a cada 5 min.
+        'TIMEOUT': 300, # Tempo em segundos (300s = 5 minutos). A requisição para a API será feita nesse intervalo de tempo.
     }
 }
 INSTALLED_APPS = [
-    'requests',  # APIs oublicas
+    'requests',  
     'crispy_forms', 
     'crispy_bootstrap5',
     'core',
@@ -125,7 +125,6 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'America/Cuiaba'
 USE_TZ = True
 USE_I18N = True
-
 USE_TZ = True
 
 

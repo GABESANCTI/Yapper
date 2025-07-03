@@ -26,7 +26,10 @@
                         {% if yap.user.profile_picture %}
                             <img src="{{ yap.user.profile_picture.url }}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;" alt="Foto de perfil">
                         {% else %}
-                            <img src="https://via.placeholder.com/40" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;" alt="Foto de perfil padrão">
+                            {# NOVO: Ícone de usuário padrão #}
+                            <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-size: 1.5rem;">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
                         {% endif %}
                     </a>
                     <div>
@@ -114,6 +117,15 @@
                     .catch(error => console.error('Erro ao curtir Yap:', error));
                 });
             });
+        });
+    </script>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script>
+        // Adiciona a classe fade-in aos cards de Yaps
+        document.querySelectorAll('.fade-in').forEach(card => {
+            card.classList.add('fade-in');
         });
     </script>
 {% endblock %}

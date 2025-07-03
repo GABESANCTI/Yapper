@@ -16,7 +16,10 @@
                         {% if user_result.profile_picture %}
                             <img src="{{ user_result.profile_picture.url }}" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;" alt="Foto de perfil">
                         {% else %}
-                            <img src="https://via.placeholder.com/50" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;" alt="Foto de perfil padrão">
+                            {# NOVO: Ícone de usuário padrão centralizado #}
+                            <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px; font-size: 1.8rem; object-fit: cover;">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
                         {% endif %}
                         <div>
                             <h5 class="mb-1">
