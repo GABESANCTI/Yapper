@@ -118,7 +118,7 @@ Antes de comecar, certifique-se de ter os seguintes programas instalados em seu 
 2.  **Navegar para o Diretorio do Projeto:**
     Apos a clonagem, navegue para o diretorio do projeto Yapper:
     ```bash
-    cd yapper
+    cd Yapper
     ```
 
 3.  **Criar e Ativar Ambiente Virtual:**
