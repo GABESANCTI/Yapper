@@ -22,7 +22,7 @@
         {% if item.is_yap %}
             <div class="card mb-3 shadow-sm rounded fade-in">
                 <div class="card-body">
-                    {# Exibe a miniatura da foto de perfil ao lado do nome #}
+                    {# miniatura da foto de perfil ao lado do nome #}
                     <div class="d-flex align-items-center mb-2">
                         <a href="{% url 'core:user_profile' username=item.user.username %}" class="me-2">
                             {% if item.user.profile_picture %}
@@ -89,13 +89,13 @@
                 <div class="card-body">
                     {# Estrutura de foto de perfil/nome consistente com Yaps #}
                     <div class="d-flex align-items-center mb-2">
-                        {# Removida a tag <img>. Adicionado um ícone Bootstrap para diferenciar o bot. #}
+                       
                         <div class="rounded-circle bg-info text-white d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px; object-fit: cover; font-size: 1.2rem;">
-                            <i class="bi bi-emoji-laughing-fill"></i> {# Ícone de risada do Bootstrap Icons #}
+                            <i class="bi bi-emoji-laughing-fill"></i> 
                         </div>
                         <div>
                             <a href="{{ item.profile_url }}" target="_blank" class="fw-bold text-decoration-none text-dark">
-                                {{ item.username }} {# Nome fantasia, ex: DadJokeBot #}
+                                {{ item.username }} 
                             </a>
                             <small class="text-muted d-block">
                                 @DadJokes · 
@@ -118,7 +118,7 @@
             </div>
         {% endif %}
     {% empty %}
-        <p class="text-muted">Nenhum Yap ou Piada para exibir no momento.</p>
+        <p class="text-muted">Nenhum Yap para exibir no momento :( </p>
     {% endfor %}
 
     <script>
@@ -157,7 +157,7 @@
 
 {% block extra_scripts %}
     <script>
-        // Adiciona a classe fade-in aos cards de Yaps e Piadas
+       
         document.querySelectorAll('.fade-in').forEach(card => {
             card.classList.add('fade-in');
         });

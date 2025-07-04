@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 
-app_name = 'yaps' # Namespace para as URLs do app yaps
+app_name = 'yaps' 
 
 urlpatterns = [
     path('', views.general_timeline, name='general_timeline'), # Timeline geral (home)

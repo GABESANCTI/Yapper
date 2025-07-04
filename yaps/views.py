@@ -5,15 +5,14 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.db.models import Count, F
 from django.contrib import messages
-import requests
 from datetime import datetime
 from django.utils import timezone 
-import random
-from django.core.cache import cache # Importa o sistema de cache do Django
-
+from django.core.cache import cache 
 from .models import Yap, Comment, Like
 from .forms import YapForm, CommentForm
 from core.models import User
+import requests
+import random
 
 # gestao dad jokes
 def get_dad_joke():
@@ -70,7 +69,6 @@ def get_item_creation_time(item):
 
 @login_required
 def general_timeline(request):
-    # Pega os Yaps do seu banco de dados
     yaps_from_db = Yap.objects.all().annotate(
         likes_count=Count('likes', distinct=True),
         comments_count=Count('comments', distinct=True)
@@ -83,11 +81,11 @@ def general_timeline(request):
         yap.is_yap = True # Marca como Yap para o template
         combined_timeline.append(yap)
     
-    # Adiciona uma piada aleatória (cacheada) na lista combinada
+    # Adiciona uma piada do cache na lista combinada
 
     num_jokes_to_add = 1 
     for _ in range(num_jokes_to_add):
-        joke = get_dad_joke() # Esta chamada agora é cacheada
+        joke = get_dad_joke() 
         if joke:
             combined_timeline.append(joke)
 
@@ -97,13 +95,13 @@ def general_timeline(request):
 
     context = {
         'yaps': combined_timeline, 
-        'form': YapForm(), # O formulário para criar Yap
+        'form': YapForm(), 
     }
     return render(request, 'yaps/general_timeline.html', context)
 
 @login_required
 def foryou_timeline(request):
-    # Pega apenas os Yaps de usuários que o usuário logado segue
+    # Yaps de usuários que o usuário logado segue
     followed_users = request.user.following.all()
     yaps = Yap.objects.filter(user__in=followed_users).annotate(
         likes_count=Count('likes', distinct=True),
@@ -128,7 +126,7 @@ def create_yap(request):
             messages.success(request, "Yap criado com sucesso!")
             return redirect('yaps:general_timeline')
     else:
-        form = YapForm() #  formulário para requisições GET
+        form = YapForm() 
         
     return render(request, 'yaps/create_yap.html', {'form': form})
 

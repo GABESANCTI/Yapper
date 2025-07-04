@@ -15,7 +15,7 @@
                     {% if yap.user.profile_picture %}
                         <img src="{{ yap.user.profile_picture.url }}" class="rounded-circle me-2" style="width: 50px; height: 50px; object-fit: cover;" alt="Foto de perfil">
                     {% else %}
-                        {# NOVO: Ícone de usuário padrão centralizado #}
+
                         <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-2" style="width: 50px; height: 50px; font-size: 1.8rem; object-fit: cover;">
                             <i class="bi bi-person-circle"></i>
                         </div>
@@ -45,7 +45,7 @@
                 Views: {{ yap.views_count }}
             </p>
             <div class="d-flex justify-content-between align-items-center">
-                {# Botão de Curtir Yap #}
+                {# btn Curtir Yap #}
                 <div class="like-section" data-yap-id="{{ yap.id }}">
                     {% if user.is_authenticated %}
                         <button class="btn btn-sm {% if user in yap.likes.all %}btn-danger{% else %}btn-outline-danger{% endif %} like-button">
@@ -60,7 +60,7 @@
                 </div>
 
                 <div>
-                    {# Botão que abre o modal de comentário #}
+                    {# Btn modal de comentário #}
                     {% if user.is_authenticated %}
                         <button type="button" class="btn btn-sm btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#commentModal">
                             <i class="bi bi-chat-fill"></i> Comentar ({{ yap.comments.count }})
@@ -91,7 +91,7 @@
                         {% if comment.user.profile_picture %}
                             <img src="{{ comment.user.profile_picture.url }}" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;" alt="Foto de perfil">
                         {% else %}
-                            {# NOVO: Ícone de usuário padrão centralizado #}
+                           
                             <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-2" style="width: 30px; height: 30px; font-size: 1.2rem; object-fit: cover;">
                                 <i class="bi bi-person-circle"></i>
                             </div>

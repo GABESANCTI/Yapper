@@ -14,7 +14,7 @@ body.dark-mode h3,
 body.dark-mode h4,
 body.dark-mode h5,
 body.dark-mode h6 {
-    color: #e0e0e0 !important; /* cor do texto, n usar branco pq fica feio */
+    color: #e0e0e0 !important; /* cor do texto, n usar bra nco pq fica feio */
 }
 
 body.dark-mode a {
@@ -26,13 +26,13 @@ body.dark-mode .text-muted {
     color: #b0b0b0 !important; 
 }
 body.dark-mode .text-dark {
-    color: #e0e0e0 !important; /* Força texto "text-dark" a ser claro */
+    color: #e0e0e0 !important; 
 }
 body.dark-mode .fw-bold {
-    color: #e0e0e0 !important; /* Força texto "fw-bold" a ser claro */
+    color: #e0e0e0 !important; 
 }
 body.dark-mode .card-text {
-    color: #e0e0e0 !important; /* Especifico para o texto do card */
+    color: #e0e0e0 !important; 
 }
 
 
@@ -108,7 +108,7 @@ body.dark-mode .btn-danger {
 }
 /* Botões de informação (curtir comentário) */
 body.dark-mode .btn-info {
-    background-color: #17a2b8 !important; /* Mantém a cor original ou ajusta */
+    background-color: #17a2b8 !important; 
     border-color: #17a2b8 !important;
     color: #ffffff !important;
 }

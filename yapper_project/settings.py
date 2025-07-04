@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-e3s2+ef@o_%%s=b&p4hb6z9b_x96f=%#s&w4tlqnd^%wg!0f99
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.0.16','192.168.30.107', '172.20.21.46', '127.0.0.1','lemon-hairs-doubt.loca.lt', '10.1.17.248', '192.168.1.109']
+ALLOWED_HOSTS = [ '127.0.0.1']
 AUTH_USER_MODEL = 'core.User'
 LOGIN_URL = '/accounts/login'
 LOGIN_REDIRECT_URL = '/'
@@ -44,7 +44,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake', # Um nome único para sua instância de cache
+        'LOCATION': 'unique-snowflake',
         'TIMEOUT': 300, # Tempo em segundos (300s = 5 minutos). A requisição para a API será feita nesse intervalo de tempo.
     }
 }

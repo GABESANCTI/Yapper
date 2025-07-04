@@ -20,13 +20,13 @@
     {% for yap in yaps %}
         <div class="card mb-3 shadow-sm rounded fade-in">
             <div class="card-body">
-                {# Exibe a miniatura da foto de perfil ao lado do nome #}
+
                 <div class="d-flex align-items-center mb-2">
                     <a href="{% url 'core:user_profile' username=yap.user.username %}" class="me-2">
                         {% if yap.user.profile_picture %}
                             <img src="{{ yap.user.profile_picture.url }}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;" alt="Foto de perfil">
                         {% else %}
-                            {# NOVO: Ícone de usuário padrão #}
+                            {# NOVO: Ícone de usuário padrão sem foto #}
                             <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-size: 1.5rem;">
                                 <i class="bi bi-person-circle"></i>
                             </div>
@@ -123,7 +123,6 @@
 
 {% block extra_scripts %}
     <script>
-        // Adiciona a classe fade-in aos cards de Yaps
         document.querySelectorAll('.fade-in').forEach(card => {
             card.classList.add('fade-in');
         });

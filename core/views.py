@@ -37,7 +37,6 @@ def edit_profile(request):
                 for error in errors:
                     messages.error(request, f"{field.replace('_', ' ').capitalize()}: {error}")
     else:
-        # Exibe o formulário preenchido com os dados atuais do usuário
         form = UserUpdateForm(instance=request.user)
     
     context = {
