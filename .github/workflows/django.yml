@@ -1,0 +1,39 @@
+name: Django CI
+
+on:
+  push:
+    branches: [ main, master ] # Dispara o workflow em push para 'main' ou 'master'
+  pull_request:
+    branches: [ main, master ] # Dispara o workflow em Pull Request para 'main' ou 'master'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # O ambiente de execução, uma máquina Linux
+
+    steps:
+    - name: Checkout code # Passo 1: Clona seu repositório
+      uses: actions/checkout@v3
+
+    - name: Set up Python # Passo 2: Configura o ambiente Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x' # Ajuste para sua versão do Python (ex: '3.11', '3.13')
+
+    - name: Install dependencies # Passo 3: Instala as dependencias
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install dj-database-url psycopg2-binary whitenoise gunicorn # Garante que drivers de DB e WSGI estao presentes
+
+    - name: Run Django checks # Passo 4: Executa as verificacoes basicas do Django
+      run: |
+        python manage.py check --deploy # Verifica as configs de deploy
+        python manage.py makemigrations --check --dry-run # Verifica se ha novas migracoes sem cria-las
+
+    - name: Collect static files # Passo 5: Coleta arquivos estaticos
+      run: |
+        python manage.py collectstatic --no-input
+
+    - name: Run Django tests # NOVO: Passo 6: Roda os testes do Django
+      run: |
+        python manage.py test
